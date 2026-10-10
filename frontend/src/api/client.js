@@ -112,12 +112,17 @@ async function request(path, options = {}) {
 
 /**
  * تُنشئ عنوان URL النهائي:
- *  - مع Proxy (API_URL فارغ): /api/auth/login  أو  /uploads/x.jpg
- *  - بدون Proxy: {API_URL}/auth/login  أو  {API_URL}/uploads/x.jpg
+ * - مع Proxy (API_URL فارغ): /api/auth/login 
+ * - بدون Proxy (الإنتاج): {API_URL}/auth/login (مع إزالة /api إن وجدت لمنع خطأ 404)
  */
 function buildUrl(path, { stripApiPrefix = false } = {}) {
-  const base = API_URL === '' ? (stripApiPrefix ? '' : '/api') : API_URL;
-  return `${base}${path}`;
+  if (API_URL === '') {
+    return stripApiPrefix ? path : `${path.startsWith('/api') ? '' : '/api'}${path}`;
+  } else {
+    // في حالة الإنتاج: إزالة /api المتكررة إن وجدت في الـ path ليتوافق مع روتات PHP المباشرة
+    const cleanPath = path.replace(/^\/api/, '');
+    return `${API_URL}${cleanPath.startsWith('/') ? cleanPath : '/' + cleanPath}`;
+  }
 }
 
 export const api = {
