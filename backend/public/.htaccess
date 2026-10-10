@@ -1,0 +1,10 @@
+RewriteEngine On
+
+# Apache مع CGI/FastCGI يحذف رأس Authorization افتراضيًا فتفشل المصادقة بلا سبب ظاهر — نمرّره صراحةً
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# إذا لم يكن الطلب لملف أو مجلد موجود فعليًا، وجّهه إلى index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]

@@ -1,0 +1,16 @@
+# يمنع تنفيذ أي ملف PHP أو سكربت داخل هذا المجلد، حتى لو نجح أحدهم برفع ملف بامتداد خبيث
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phar|cgi|pl)$">
+    Require all denied
+</FilesMatch>
+
+Options -ExecCGI
+
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
